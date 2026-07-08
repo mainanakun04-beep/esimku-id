@@ -33,6 +33,11 @@ type Step = "form" | "payment" | "confirm";
 
 const stepIndex: Record<Step, number> = { form: 0, payment: 1, confirm: 2 };
 
+/* ---- Alamat webhook n8n (VPS Contabo, produksi) --------------------- */
+const N8N_WEBHOOK_URL =
+  "https://vmi3426452.contaboserver.net/webhook/lead-crm-esim";
+const SPREADSHEET_ID = "1byJirWoUUJfv3WtcpeC7dD12ApQ5evyrGZMtOC_tKZk";
+
 export function CheckoutFlow() {
   const searchParams = useSearchParams();
   const initialProduct = getProductById(searchParams.get("product") ?? "");
@@ -61,6 +66,28 @@ export function CheckoutFlow() {
   const onSubmit = (values: CheckoutFormValues) => {
     setOrder(values);
     setStep("payment");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleConfirmPayment = async () => {
+    if (order && product) {
+      try {
+        await fetch(N8N_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            spreadsheetId: SPREADSHEET_ID,
+            name: order.name,
+            whatsapp: order.whatsapp,
+            iphone_model: order.device,
+            product_id: product.id,
+          }),
+        });
+      } catch (err) {
+        console.error("Gagal kirim ke n8n:", err);
+      }
+    }
+    setStep("confirm");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -168,10 +195,7 @@ export function CheckoutFlow() {
                     type="button"
                     size="lg"
                     className="sm:flex-1"
-                    onClick={() => {
-                      setStep("confirm");
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
+                    onClick={handleConfirmPayment}
                   >
                     Saya Sudah Bayar
                     <ArrowRight className="size-4" />
