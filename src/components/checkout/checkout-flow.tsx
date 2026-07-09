@@ -27,6 +27,7 @@ import { siteConfig } from "@/config/site";
 import { formatIDR, formatData, formatValidity } from "@/lib/format";
 import { buildOrderMessage } from "@/lib/whatsapp";
 import { checkoutSchema, type CheckoutFormValues } from "@/lib/checkout-schema";
+import { computePricing, type Pricing } from "@/lib/pricing";
 import type { Product } from "@/types";
 
 type Step = "form" | "payment" | "confirm";
@@ -45,6 +46,9 @@ export function CheckoutFlow() {
   const [product, setProduct] = useState<Product | undefined>(initialProduct);
   const [step, setStep] = useState<Step>("form");
   const [order, setOrder] = useState<CheckoutFormValues | null>(null);
+  const [promoCode, setPromoCode] = useState<string | null>(
+    searchParams.get("code")
+  );
 
   const {
     register,
@@ -57,11 +61,16 @@ export function CheckoutFlow() {
 
   const whatsappHref = useMemo(() => {
     if (!product || !order) return "#";
-    const message = buildOrderMessage({ ...order, product });
+    const pricing = computePricing(product, promoCode);
+    let message = buildOrderMessage({ ...order, product });
+    if (pricing.promo) {
+      message += `\nKode promo: ${pricing.promo.code}`;
+    }
+    message += `\nTotal dibayar: ${formatIDR(pricing.finalPrice)}`;
     return `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
       message
     )}`;
-  }, [order, product]);
+  }, [order, product, promoCode]);
 
   const onSubmit = (values: CheckoutFormValues) => {
     setOrder(values);
@@ -71,6 +80,7 @@ export function CheckoutFlow() {
 
   const handleConfirmPayment = async () => {
     if (order && product) {
+      const pricing = computePricing(product, promoCode);
       try {
         await fetch(N8N_WEBHOOK_URL, {
           method: "POST",
@@ -81,6 +91,10 @@ export function CheckoutFlow() {
             whatsapp: order.whatsapp,
             iphone_model: order.device,
             product_id: product.id,
+            promo_code: pricing.promo?.code ?? "",
+            source_platform: pricing.promo?.platform ?? "Website",
+            price_normal: pricing.normalPrice,
+            price_paid: pricing.finalPrice,
           }),
         });
       } catch (err) {
@@ -95,6 +109,8 @@ export function CheckoutFlow() {
   if (!product) {
     return <ProductPicker onSelect={setProduct} />;
   }
+
+  const pricing = computePricing(product, promoCode);
 
   return (
     <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_360px]">
@@ -171,9 +187,26 @@ export function CheckoutFlow() {
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-neutral-500">Total pembayaran</p>
-                    <p className="font-heading text-3xl font-bold text-dark">
-                      {formatIDR(product.price)}
-                    </p>
+                    {pricing.discount > 0 ? (
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-base font-medium text-neutral-400 line-through">
+                          {formatIDR(pricing.normalPrice)}
+                        </span>
+                        <span className="font-heading text-3xl font-bold text-dark">
+                          {formatIDR(pricing.finalPrice)}
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="font-heading text-3xl font-bold text-dark">
+                        {formatIDR(pricing.finalPrice)}
+                      </p>
+                    )}
+                    {pricing.promo ? (
+                      <p className="mt-1 text-xs font-medium text-emerald-600">
+                        Kode {pricing.promo.code} · Hemat{" "}
+                        {formatIDR(pricing.discount)}
+                      </p>
+                    ) : null}
                     <p className="mt-1 text-xs text-neutral-400">
                       a.n. {siteConfig.payment.merchantName}
                     </p>
@@ -234,7 +267,13 @@ export function CheckoutFlow() {
 
       {/* Order summary */}
       <div className="order-1 lg:order-2">
-        <OrderSummary product={product} onChange={() => setProduct(undefined)} />
+        <OrderSummary
+          product={product}
+          pricing={pricing}
+          promoCode={promoCode}
+          onApplyCode={setPromoCode}
+          onChange={() => setProduct(undefined)}
+        />
       </div>
     </div>
   );
@@ -274,11 +313,24 @@ Field.displayName = "Field";
 
 function OrderSummary({
   product,
+  pricing,
+  promoCode,
+  onApplyCode,
   onChange,
 }: {
   product: Product;
+  pricing: Pricing;
+  promoCode: string | null;
+  onApplyCode: (code: string | null) => void;
   onChange: () => void;
 }) {
+  const [codeInput, setCodeInput] = useState(promoCode ?? "");
+
+  const apply = () => {
+    const trimmed = codeInput.trim();
+    onApplyCode(trimmed.length ? trimmed : null);
+  };
+
   return (
     <Card className="sticky top-24 flex flex-col gap-5 p-6">
       <div className="flex items-center justify-between">
@@ -306,11 +358,58 @@ function OrderSummary({
         </div>
       </div>
 
+      {/* Kode promo */}
+      <div className="flex flex-col gap-2 border-t border-neutral-100 pt-4">
+        <Label htmlFor="promo">Punya kode promo?</Label>
+        <div className="flex gap-2">
+          <Input
+            id="promo"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                apply();
+              }
+            }}
+            placeholder="mis. TIKTOKHEMAT"
+            className="uppercase"
+          />
+          <Button type="button" variant="secondary" onClick={apply}>
+            Pakai
+          </Button>
+        </div>
+        {promoCode && pricing.promo ? (
+          <p className="text-sm font-medium text-emerald-600">
+            Kode {pricing.promo.code} dipakai · Hemat {formatIDR(pricing.discount)}
+          </p>
+        ) : promoCode && !pricing.promo ? (
+          <p className="text-sm text-red-500">Kode tidak dikenal.</p>
+        ) : (
+          <p className="text-xs text-neutral-400">
+            Dari TikTok/IG? Masukkan kodenya untuk harga khusus.
+          </p>
+        )}
+      </div>
+
       <div className="flex items-center justify-between border-t border-neutral-100 pt-4">
         <span className="text-sm text-neutral-500">Total</span>
-        <span className="font-heading text-2xl font-bold text-dark">
-          {formatIDR(product.price)}
-        </span>
+        <div className="text-right">
+          {pricing.discount > 0 ? (
+            <>
+              <span className="block text-sm text-neutral-400 line-through">
+                {formatIDR(pricing.normalPrice)}
+              </span>
+              <span className="font-heading text-2xl font-bold text-dark">
+                {formatIDR(pricing.finalPrice)}
+              </span>
+            </>
+          ) : (
+            <span className="font-heading text-2xl font-bold text-dark">
+              {formatIDR(pricing.finalPrice)}
+            </span>
+          )}
+        </div>
       </div>
     </Card>
   );
