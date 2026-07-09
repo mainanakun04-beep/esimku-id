@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Signal, Wifi } from "lucide-react";
+import {
+  ArrowRight,
+  MessageCircle,
+  ShieldCheck,
+  Signal,
+  Wifi,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generalWhatsAppLink } from "@/lib/whatsapp";
 import { PhoneMockup } from "@/components/sections/phone-mockup";
@@ -47,6 +53,17 @@ export function Hero() {
             perangkat, tanpa ribet.
           </p>
 
+          {/* Badge Garansi */}
+          <div className="flex flex-col items-start gap-1.5">
+            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200">
+              <ShieldCheck className="size-4" />
+              Garansi Aktif atau Uang Kembali
+            </span>
+            <span className="text-sm text-neutral-500">
+              Didampingi sampai HP-mu nyala lagi.
+            </span>
+          </div>
+
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg">
               <Link href="#paket">
@@ -62,7 +79,11 @@ export function Hero() {
             </Button>
           </div>
 
-          <div className="flex items-center gap-6 pt-2 text-sm text-neutral-500">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm text-neutral-500">
+            <span className="inline-flex items-center gap-2">
+              <ShieldCheck className="size-4 text-primary" />
+              Garansi uang kembali
+            </span>
             <span className="inline-flex items-center gap-2">
               <Wifi className="size-4 text-primary" />
               Bisa hotspot
