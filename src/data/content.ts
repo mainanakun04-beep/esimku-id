@@ -25,6 +25,11 @@ export const trustItems: TrustItem[] = [
 
 export const faqItems: FaqItem[] = [
   {
+    question: "Kalau eSIM-nya tidak bisa aktif, gimana?",
+    answer:
+      "Kamu tidak menanggung risiko apa pun. Kami dampingi sampai berhasil lewat WhatsApp. Kalau HP kamu sudah lolos cek kompatibilitas (tidak simlock & mendukung eSIM) tapi tetap tidak bisa aktif, uang kembali 100%.",
+  },
+  {
     question: "Apakah eSIM aman?",
     answer:
       "Ya. eSIM memakai teknologi standar internasional dan diaktifkan tanpa membongkar perangkat.",
@@ -37,6 +42,11 @@ export const faqItems: FaqItem[] = [
     question: "Apakah perlu registrasi IMEI?",
     answer:
       "Tidak. Justru itu keunggulannya — kamu bisa internetan tanpa registrasi IMEI.",
+  },
+  {
+    question: "Setelah scan QR kok jaringan belum muncul?",
+    answer:
+      "Itu normal. Pastikan Data Roaming sudah dinyalakan (Pengaturan → Seluler → eSIM → Roaming Data: ON), lalu tunggu 15–30 menit sampai jaringan muncul. Jangan hapus eSIM-nya. Kalau setelah 30 menit masih kendala, chat kami — dipandu sampai jalan.",
   },
   {
     question: "Apakah bisa hotspot?",
