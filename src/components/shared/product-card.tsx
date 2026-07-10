@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatIDR, formatData, formatValidity } from "@/lib/format";
+import { getNormalPrice } from "@/lib/pricing";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -13,6 +14,9 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const normalPrice = getNormalPrice(product);
+  const hasCodePrice = product.price < normalPrice;
+
   return (
     <Card
       className={cn(
@@ -47,9 +51,15 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <div className="mt-auto">
         <p className="font-heading text-3xl font-bold text-dark">
-          {formatIDR(product.price)}
+          {formatIDR(normalPrice)}
         </p>
-        <p className="text-xs text-neutral-400">Harga sekali beli</p>
+        {hasCodePrice ? (
+          <p className="mt-1 text-xs font-medium text-emerald-600">
+            {formatIDR(product.price)} pakai kode dari TikTok/IG
+          </p>
+        ) : (
+          <p className="text-xs text-neutral-400">Harga sekali beli</p>
+        )}
       </div>
 
       <Button asChild className="w-full" variant={product.featured ? "primary" : "secondary"}>
