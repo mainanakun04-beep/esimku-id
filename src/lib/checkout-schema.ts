@@ -16,6 +16,9 @@ export const checkoutSchema = z.object({
     .string()
     .trim()
     .min(2, { message: "Tulis tipe iPhone kamu, contoh: iPhone 12." }),
+  sourceReported: z
+    .string()
+    .min(1, { message: "Pilih dari mana kamu tahu eSIMku." }),
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutSchema>;

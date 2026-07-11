@@ -28,11 +28,51 @@ import { formatIDR, formatData, formatValidity } from "@/lib/format";
 import { buildOrderMessage } from "@/lib/whatsapp";
 import { checkoutSchema, type CheckoutFormValues } from "@/lib/checkout-schema";
 import { computePricing, type Pricing } from "@/lib/pricing";
+import { getAttribution } from "@/lib/attribution";
 import type { Product } from "@/types";
 
 type Step = "form" | "payment" | "confirm";
 
 const stepIndex: Record<Step, number> = { form: 0, payment: 1, confirm: 2 };
+
+/* ---- Opsi & pemetaan sumber (dropdown "tau dari mana") --------------- */
+const SOURCE_OPTIONS = [
+  "TikTok",
+  "Instagram",
+  "Facebook",
+  "YouTube",
+  "Teman / Rekomendasi",
+  "Reseller",
+  "Shopee",
+  "Lainnya",
+] as const;
+
+const REPORTED_MAP: Record<string, string> = {
+  TikTok: "TT",
+  Instagram: "IG",
+  Facebook: "FB",
+  YouTube: "YT",
+  "Teman / Rekomendasi": "TEMAN",
+  Reseller: "RS",
+  Shopee: "SHOPEE",
+  Lainnya: "LAIN",
+};
+
+/** Gabungkan jejak sepatu (UTM) + jawaban dropdown jadi atribusi final.
+ *  Aturan: sepatu dulu, mulut belakangan. */
+function buildAttributionPayload(sourceReported: string) {
+  const a = getAttribution();
+  const firstSource = a.firstSource || REPORTED_MAP[sourceReported] || "UNKNOWN";
+  const refToken = a.firstContent ? `${firstSource}-${a.firstContent}` : firstSource;
+  return {
+    first_source: firstSource,
+    current_source: a.lastSource || firstSource,
+    content_id: a.firstContent,
+    campaign: a.campaign,
+    source_reported: sourceReported,
+    ref_token: refToken,
+  };
+}
 
 /* ---- Alamat webhook n8n (VPS Contabo, produksi) --------------------- */
 const N8N_WEBHOOK_URL =
@@ -56,7 +96,7 @@ export function CheckoutFlow() {
     formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { name: "", whatsapp: "", device: "" },
+    defaultValues: { name: "", whatsapp: "", device: "", sourceReported: "" },
   });
 
   const whatsappHref = useMemo(() => {
@@ -67,6 +107,7 @@ export function CheckoutFlow() {
       message += `\nKode promo: ${pricing.promo.code}`;
     }
     message += `\nTotal dibayar: ${formatIDR(pricing.finalPrice)}`;
+    message += `\n(ref: ${buildAttributionPayload(order.sourceReported).ref_token})`;
     return `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(
       message
     )}`;
@@ -81,6 +122,7 @@ export function CheckoutFlow() {
   const handleConfirmPayment = async () => {
     if (order && product) {
       const pricing = computePricing(product, promoCode);
+      const attribution = buildAttributionPayload(order.sourceReported);
       try {
         await fetch(N8N_WEBHOOK_URL, {
           method: "POST",
@@ -95,6 +137,12 @@ export function CheckoutFlow() {
             source_platform: pricing.promo?.platform ?? "Website",
             price_normal: pricing.normalPrice,
             price_paid: pricing.finalPrice,
+            // --- atribusi asli (jejak sepatu + dropdown) ---
+            first_source: attribution.first_source,
+            current_source: attribution.current_source,
+            content_id: attribution.content_id,
+            campaign: attribution.campaign,
+            source_reported: attribution.source_reported,
           }),
         });
       } catch (err) {
@@ -125,7 +173,7 @@ export function CheckoutFlow() {
                   Data pemesan
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500">
-                  Kami hanya butuh 3 hal untuk mengaktifkan eSIM kamu.
+                  Kami hanya butuh beberapa hal untuk mengaktifkan eSIM kamu.
                 </p>
 
                 <form
@@ -155,6 +203,30 @@ export function CheckoutFlow() {
                     error={errors.device?.message}
                     {...register("device")}
                   />
+
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="sourceReported">Tau eSIMku dari mana?</Label>
+                    <select
+                      id="sourceReported"
+                      className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-3 text-sm text-dark outline-none transition-colors focus:border-primary"
+                      aria-invalid={!!errors.sourceReported}
+                      {...register("sourceReported")}
+                    >
+                      <option value="" disabled>
+                        Pilih salah satu…
+                      </option>
+                      {SOURCE_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.sourceReported ? (
+                      <p className="text-sm text-red-500">
+                        {errors.sourceReported.message}
+                      </p>
+                    ) : null}
+                  </div>
 
                   <Button type="submit" size="lg" className="mt-2 w-full">
                     Lanjut ke Pembayaran

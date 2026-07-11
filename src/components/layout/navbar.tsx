@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { siteConfig, navLinks } from "@/config/site";
 import { generalWhatsAppLink } from "@/lib/whatsapp";
+import { useRefLink } from "@/lib/use-ref-link";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -29,7 +30,7 @@ export function Navbar() {
     };
   }, [open]);
 
-  const whatsapp = generalWhatsAppLink();
+  const whatsapp = useRefLink(generalWhatsAppLink());
 
   return (
     <header

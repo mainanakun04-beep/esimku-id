@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { AttributionCapture } from "@/components/layout/attribution-capture";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -59,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} ${poppins.variable}`}>
       <body className="min-h-dvh antialiased">
+        <AttributionCapture />
         <Navbar />
         <main>{children}</main>
         <Footer />
