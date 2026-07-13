@@ -9,7 +9,7 @@ export const trustItems: TrustItem[] = [
   {
     icon: "Timer",
     title: "Cepat",
-    description: "Aktivasi hanya butuh 1–5 menit lewat QR Code.",
+    description: "Pasang cukup scan QR. Jaringan aktif dalam 15–30 menit.",
   },
   {
     icon: "ShieldCheck",
@@ -53,8 +53,9 @@ export const faqItems: FaqItem[] = [
     answer: "Bisa. eSIM roaming mendukung hotspot untuk berbagi internet.",
   },
   {
-    question: "Berapa lama aktivasi?",
-    answer: "Sekitar 1–5 menit setelah kamu scan QR Code.",
+    question: "Berapa lama sampai internet bisa dipakai?",
+    answer:
+      "Pemasangan eSIM sendiri cepat — cukup scan QR. Setelah itu, jaringan biasanya menyala dalam 15–30 menit. Pastikan Roaming Data aktif dan jangan hapus eSIM-nya selama menunggu. Kalau lewat 30 menit belum juga jalan, chat kami — kami dampingi sampai nyala.",
   },
   {
     question: "Bagaimana cara kerja eSIM?",
@@ -99,7 +100,7 @@ export const tutorials: Tutorial[] = [
   {
     id: "tut1",
     title: "Cara Scan QR eSIM",
-    description: "Langkah aktivasi eSIM lewat QR Code dalam hitungan menit.",
+    description: "Langkah aktivasi eSIM lewat QR Code, mudah diikuti.",
     thumbnail: "/tutorials/tutorial-1.mp4",
     videoUrl: "/tutorials/tutorial-1.mp4",
   },
