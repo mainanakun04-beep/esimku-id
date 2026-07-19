@@ -25,7 +25,7 @@ export function Cta() {
                 Siap internetan tanpa registrasi IMEI?
               </h2>
               <p className="mt-4 text-lg text-white/70">
-                Pilih paketmu sekarang, aktif dalam hitungan menit.
+                Pilih paketmu sekarang, jaringan aktif dalam 15–30 menit.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg">

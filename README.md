@@ -53,7 +53,7 @@ components to change content.
 ### WhatsApp number
 
 In `src/config/site.ts`, set `contact.whatsappNumber` in international format
-without `+` or spaces. Already set to `6285941346558` (0859-4134-6558).
+without `+` or spaces. Already set to `6289502800002` (0895-0280-0002).
 
 ### QRIS image
 

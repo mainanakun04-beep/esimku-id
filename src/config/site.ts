@@ -8,13 +8,13 @@ export const siteConfig = {
   name: "eSIMku.id",
   tagline: "Internet untuk iPhone Inter tanpa registrasi IMEI.",
   description:
-    "Solusi internet untuk iPhone inter yang IMEI-nya diblokir di Indonesia. Aktif dalam hitungan menit menggunakan eSIM roaming — tanpa bongkar perangkat, tanpa registrasi IMEI.",
+    "Pemasangan eSIM 1–5 menit, jaringan aktif dalam 15–30 menit — tanpa bongkar perangkat, tanpa registrasi IMEI. eSIM ini untuk internet saja.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://esimku.id",
 
   /** Contact & marketplace — replace with your real accounts */
   contact: {
     /** International format without "+" or spaces, e.g. 6281234567890 */
-    whatsappNumber: "6285941346558",
+    whatsappNumber: "6289502800002",
     shopeeUrl: "https://shopee.co.id/esimku.id",
     instagramUrl: "https://instagram.com/esimku.id",
     tiktokUrl: "https://tiktok.com/@esimku.id",

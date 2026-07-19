@@ -4,7 +4,7 @@ export const trustItems: TrustItem[] = [
   {
     icon: "Zap",
     title: "Praktis",
-    description: "Tanpa bongkar perangkat. Cukup scan QR, langsung terhubung.",
+    description: "Tanpa bongkar perangkat. Cukup scan QR, lalu tunggu jaringan muncul.",
   },
   {
     icon: "Timer",
@@ -19,11 +19,16 @@ export const trustItems: TrustItem[] = [
   {
     icon: "BadgeCheck",
     title: "Tanpa Registrasi IMEI",
-    description: "Lewati biaya registrasi IMEI yang mahal dan rumit.",
+    description: "Cukup pakai eSIM roaming — tanpa perlu proses registrasi IMEI.",
   },
 ];
 
 export const faqItems: FaqItem[] = [
+  {
+    question: "Apakah bisa telepon, SMS, dan terima OTP bank?",
+    answer:
+      "Perlu diketahui: eSIM ini internet saja. Tidak bisa telepon atau SMS lewat sinyal, dan tidak bisa menerima OTP dari bank. Tapi WhatsApp jalan normal (termasuk telepon WA), dan bisa dipakai hotspot.",
+  },
   {
     question: "Kalau eSIM-nya tidak bisa aktif, gimana?",
     answer:
@@ -50,7 +55,8 @@ export const faqItems: FaqItem[] = [
   },
   {
     question: "Apakah bisa hotspot?",
-    answer: "Bisa. eSIM roaming mendukung hotspot untuk berbagi internet.",
+    answer:
+      "Bisa. eSIM roaming bisa dipakai internetan dan hotspot untuk berbagi koneksi ke perangkat lain.",
   },
   {
     question: "Berapa lama sampai internet bisa dipakai?",
@@ -60,7 +66,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "Bagaimana cara kerja eSIM?",
     answer:
-      "eSIM bekerja seperti voucher paket data. Saat QR diaktifkan, internet langsung bisa digunakan. Jika masa aktif habis, cukup scan QR baru untuk mengaktifkan kembali.",
+      "eSIM bekerja seperti voucher paket data. Setelah QR discan dan Data Roaming dinyalakan, jaringan muncul dalam 15–30 menit dan internet bisa dipakai. Jika masa aktif habis, cukup scan QR baru untuk mengaktifkan kembali.",
   },
   {
     question: "Bagaimana cara cek apakah HP saya simlock?",

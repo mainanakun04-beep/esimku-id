@@ -49,18 +49,19 @@ export function Hero() {
           </h1>
 
           <p className="max-w-xl text-lg text-neutral-500">
-            Aktif dalam hitungan menit menggunakan eSIM roaming. Tanpa bongkar
-            perangkat, tanpa ribet.
+            Pasang eSIM cukup 1–5 menit, jaringan aktif dalam 15–30 menit.
+            Tanpa bongkar perangkat, tanpa ribet.
           </p>
 
           {/* Badge Garansi */}
           <div className="flex flex-col items-start gap-1.5">
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200">
               <ShieldCheck className="size-4" />
-              Garansi Aktif atau Uang Kembali
+              Uang kembali 100% kalau lolos cek kompatibilitas
             </span>
             <span className="text-sm text-neutral-500">
-              Didampingi sampai HP-mu nyala lagi.
+              Kalau HP-mu tidak simlock dan mendukung eSIM tapi tetap tidak bisa
+              aktif, uang kembali 100%.
             </span>
           </div>
 
@@ -82,15 +83,15 @@ export function Hero() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm text-neutral-500">
             <span className="inline-flex items-center gap-2">
               <ShieldCheck className="size-4 text-primary" />
-              Garansi uang kembali
+              Cek kompatibilitas gratis
             </span>
             <span className="inline-flex items-center gap-2">
               <Wifi className="size-4 text-primary" />
-              Bisa hotspot
+              Internet &amp; hotspot
             </span>
             <span className="inline-flex items-center gap-2">
               <Signal className="size-4 text-primary" />
-              Aktivasi 1–5 menit
+              Pasang eSIM 1–5 menit
             </span>
           </div>
         </motion.div>

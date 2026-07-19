@@ -13,6 +13,7 @@ import {
   ArrowRight,
   MessageCircle,
   ShieldCheck,
+  Info,
   Wifi,
   CalendarDays,
 } from "lucide-react";
@@ -283,6 +284,14 @@ export function CheckoutFlow() {
                       a.n. {siteConfig.payment.merchantName}
                     </p>
                   </div>
+                </div>
+
+                {/* Disclosure wajib — sebelum tombol konfirmasi bayar */}
+                <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+                  <Info className="mt-0.5 size-5 shrink-0 text-amber-600" />
+                  <p className="text-sm leading-relaxed text-amber-900">
+                    Perlu diketahui: eSIM ini internet saja. Tidak bisa telepon atau SMS lewat sinyal, dan tidak bisa menerima OTP dari bank. Tapi WhatsApp jalan normal (termasuk telepon WA), dan bisa dipakai hotspot.
+                  </p>
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
